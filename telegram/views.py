@@ -14,11 +14,8 @@ class Start(APIView):
           Создание пользователя
         """
         data = request.data
-        menu = types.ReplyKeyboardMarkup(True, False)
-        menu.row("Профиль")
-        menu.row("Каталог", "Магазины")
         bot = telebot.TeleBot(Config.objects.get(key='bot_token').value)
-        bot.send_message(data.get("id"), Config.objects.get(key='hello_text').value, reply_markup=menu)
+        bot.send_message(data.get("id"), Config.objects.get(key='hello_text').value)
         try:
             User.objects.get(telegram_id=data.get('id'))
         except User.DoesNotExist:

@@ -73,5 +73,5 @@ print(api_request.json())
 for item in api_request.json():
     threading.Thread(target=d_parser, name="D parser", args=(item.get('rsi_d'), item.get('papers'),
                                                              item.get('d_timeout'))).start()
-    # threading.Thread(target=w_parser, name="W parser", args=(item.get('rsi_w'), item.get('papers'),
-    #                                                          item.get('w_timeout'))).start()
+    threading.Thread(target=w_parser, name="W parser", args=(item.get('rsi_w'), item.get('papers'),
+                                                             item.get('w_timeout'))).start()

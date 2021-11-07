@@ -1,0 +1,40 @@
+import telebot
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from config.models import Config
+from service.models import Service
+from service.serializer import ServiceSerializer
+from telegram.models import User
+
+
+class ServiceView(APIView):
+    def get(self, request):
+        if request.GET.get("key"):
+            try:
+                queryset = Service.objects.get(key=request.GET.get("key"), is_active=True)
+                return Response(ServiceSerializer(queryset, many=False).data)
+            except Service.DoesNotExist:
+                return Response(status=404)
+        queryset = Service.objects.filter(is_active=True)
+        return Response(ServiceSerializer(queryset, many=True).data)
+
+    def post(self, request):
+        data = request.data
+        paper = data.get("paper")
+        try:
+            service = Service.objects.get(key='service_screener', is_active=True)
+        except Service.DoesNotExist:
+            return Response(status=404)
+        bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
+        text = "hello world!"
+        if data.get("period") == "w":
+            text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
+        if data.get("period") == "d":
+            text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
+        for user in User.objects.all():
+            try:
+                bot.send_message(user.telegram_id, text)
+            except Exception as e:
+                print(e)
+        return Response(status=200)

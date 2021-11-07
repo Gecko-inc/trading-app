@@ -42,11 +42,13 @@ def w_parser(rsi: str, papers: list, timeout: int):
     while True:
         response = requests.post('https://scanner.tradingview.com/america/scan', headers=headers, data=data)
         for _ in response.json().get('data'):
-            if _.get("s") and _.get("s").replace("NYSE:", "") in papers:
-                requests.post(f"{url}/service/", data={
-                    "paper": _.get("s").replace("NYSE:", ""),
-                    "period": "w"
-                })
+            if _.get("s"):
+                paper = _.get("s").split(":")
+                if paper[1] in papers:
+                    requests.post(f"{url}/service/", data={
+                        "paper": paper[1],
+                        "period": "w"
+                    })
         time.sleep(timeout * 60)
 
 
@@ -54,12 +56,15 @@ def d_parser(rsi: str, papers: list, timeout: int):
     data = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI","operation":"less","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close","change","change_abs","Recommend.All","volume","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
     while True:
         response = requests.post('https://scanner.tradingview.com/america/scan', headers=headers, data=data)
+        print(response.json())
         for _ in response.json().get('data'):
-            if _.get("s") and _.get("s").replace("NYSE:", "") in papers:
-                requests.post(f"{url}/service/", data={
-                    "paper": _.get("s").replace("NYSE:", ""),
-                    "period": "d"
-                })
+            if _.get("s"):
+                paper = _.get("s").split(":")
+                if paper[1] in papers:
+                    requests.post(f"{url}/service/", data={
+                        "paper": paper[1],
+                        "period": "d"
+                    })
         time.sleep(timeout * 60)
 
 
@@ -68,5 +73,5 @@ print(api_request.json())
 for item in api_request.json():
     threading.Thread(target=d_parser, name="D parser", args=(item.get('rsi_d'), item.get('papers'),
                                                              item.get('d_timeout'))).start()
-    threading.Thread(target=w_parser, name="D parser", args=(item.get('rsi_w'), item.get('papers'),
-                                                             item.get('w_timeout'))).start()
+    # threading.Thread(target=w_parser, name="W parser", args=(item.get('rsi_w'), item.get('papers'),
+    #                                                          item.get('w_timeout'))).start()

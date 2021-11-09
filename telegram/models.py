@@ -4,6 +4,7 @@ from django.db import models
 class User(models.Model):
     username = models.CharField("Логин пользователя", max_length=130, blank=True, default='None')
     telegram_id = models.CharField("ID пользователя", unique=False, max_length=130)
+    is_active = models.BooleanField("Активен", default=False)
 
     class Meta:
         verbose_name = 'Пользователь'

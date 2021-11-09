@@ -8,9 +8,11 @@ from telebot import types
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    list_display = ("username", "is_active")
+    list_editable = ("is_active", )
     fieldsets = (
         ('Основная информация', ({'fields': ('username', 'telegram_id')})),
-        ('Доплнительная информация', ({'fields': ('owner', 'bonus')})),
+        ('Доплнительная информация', ({'fields': ('is_active',)})),
     )
 
 

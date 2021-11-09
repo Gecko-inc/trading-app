@@ -1,11 +1,8 @@
 # Импорт модулей
 import telebot
-from telebot import types
 import requests
 import json
 from pathlib import Path
-import time
-import sys
 
 # Подключение файла настроек
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,16 +17,6 @@ except IOError:
 # Константы
 url = config['url']
 toolbar_width = 40
-
-# Даем время, чтобы запустился Django
-# sys.stdout.write("Starting bot\n%s" % (" " * toolbar_width))
-# sys.stdout.flush()
-# sys.stdout.write("\b" * (toolbar_width + 1))
-# for i in range(toolbar_width):
-#     time.sleep(0.1)
-#     sys.stdout.write("█")
-#     sys.stdout.flush()
-# sys.stdout.write("\nSuccess\n")
 
 r = requests.get(f"{url}/token/")  # Получение токена
 token = r.json().get("token")
@@ -60,11 +47,6 @@ def start(message):
         "id": message.from_user.id,
         'username': message.from_user.username
     })
-
-
-@bot.message_handler(commands=['cart'])
-def get_cart(message):
-    requests.get(f"{url}/api/cart/?user={message.chat.id}")
 
 
 @bot.message_handler(content_types=['text'])

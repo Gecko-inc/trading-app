@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Service(models.Model):
@@ -9,6 +10,8 @@ class Service(models.Model):
     w_timeout = models.IntegerField("Частота обновления", default=10080, help_text="В минутах")
     rsi_d = models.CharField("RSI дневной", max_length=130, default='20')
     rsi_w = models.CharField("RSI недельный", max_length=130, default='25')
+    start_time = models.TimeField("Время работы с", default=timezone.now)
+    end_time = models.TimeField("Время работы до", default=timezone.now)
 
     class Meta:
         verbose_name = "Сервис"

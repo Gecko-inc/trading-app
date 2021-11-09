@@ -1,3 +1,5 @@
+import datetime
+
 import telebot
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,15 +28,16 @@ class ServiceView(APIView):
             service = Service.objects.get(key='service_screener', is_active=True)
         except Service.DoesNotExist:
             return Response(status=404)
-        bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
-        text = "hello world!"
-        if data.get("period") == "w":
-            text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
-        if data.get("period") == "d":
-            text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
-        for user in User.objects.all():
-            try:
-                bot.send_message(user.telegram_id, text)
-            except Exception as e:
-                print(e)
+        if service.start_time <= datetime.datetime.now().time() <= service.end_time:
+            bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
+            text = "hello world!"
+            if data.get("period") == "w":
+                text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
+            if data.get("period") == "d":
+                text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
+            for user in User.objects.filter(is_active=True):
+                try:
+                    bot.send_message(user.telegram_id, text)
+                except Exception as e:
+                    print(e)
         return Response(status=200)

@@ -35,10 +35,12 @@ class ServiceView(APIView):
                 text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
             if data.get("period") == "d":
                 text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
-            for user in User.objects.filter(is_active=True):
-                try:
-                    bot.send_message(user.telegram_id, text)
-                except Exception as e:
-                    print(e)
-        print(paper)
+            for user in User.objects.all():
+                if user.is_active:
+                    try:
+                        bot.send_message(user.telegram_id, text=text)
+                        print(user.telegram_id)
+                    except Exception as e:
+                        print(e)
+            # print(text)
         return Response(status=200)

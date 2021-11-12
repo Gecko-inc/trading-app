@@ -40,4 +40,5 @@ class ServiceView(APIView):
                     bot.send_message(user.telegram_id, text)
                 except Exception as e:
                     print(e)
+        print(paper)
         return Response(status=200)

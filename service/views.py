@@ -29,18 +29,12 @@ class ServiceView(APIView):
         except Service.DoesNotExist:
             return Response(status=404)
         if service.start_time <= datetime.datetime.now().time() <= service.end_time:
-            bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
             text = "hello world!"
             if data.get("period") == "w":
                 text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
             if data.get("period") == "d":
                 text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
-            for user in User.objects.all():
-                if user.is_active:
-                    try:
-                        bot.send_message(user.telegram_id, text=text)
-                        print(user.telegram_id)
-                    except Exception as e:
-                        print(e)
-            # print(text)
-        return Response(status=200)
+            if data.get("period") == "b":
+                text = f"Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
+            User.whitelist(text=text)
+        return Response(status=201)

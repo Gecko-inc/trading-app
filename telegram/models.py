@@ -1,4 +1,7 @@
+import telebot
 from django.db import models
+
+from config.models import Config
 
 
 class User(models.Model):
@@ -12,6 +15,15 @@ class User(models.Model):
 
     def __str__(self):
         return f"@{self.username}" if self.username else self.telegram_id
+
+    @classmethod
+    def whitelist(cls, text: str):
+        bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
+        for user in cls.objects.filter(is_active=True):
+            try:
+                bot.send_message(user.telegram_id, text=text)
+            except Exception as e:
+                print(e)
 
 
 # Опросы

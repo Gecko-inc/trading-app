@@ -51,7 +51,8 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def body(message):
-    pass
+    if message.text == "Получить информацию":
+        requests.get(f"{url}/api/info?id={message.from_user.id}")
 
 
 # Обработка локации

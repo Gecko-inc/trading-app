@@ -72,6 +72,7 @@ def parser(rsi: str, papers: list, timeout: int, period: str, ):
                             "paper": paper[1],
                             "period": period
                         })
+                        time.sleep(2)
         time.sleep(timeout * 60)
 
 

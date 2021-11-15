@@ -37,4 +37,5 @@ class ServiceView(APIView):
             if data.get("period") == "b":
                 text = f"Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
             User.whitelist(text=text)
-        return Response(status=201)
+            return Response(status=200)
+        return Response(status=301)

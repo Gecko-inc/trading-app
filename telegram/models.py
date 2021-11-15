@@ -18,14 +18,17 @@ class User(models.Model):
 
     @classmethod
     def whitelist(cls, text: str):
+        chats = [user.telegram_id for user in cls.objects.filter(is_active=True)]
         bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
-        for user in cls.objects.all():
-            # for user in cls.objects.filter(is_active=True):
-            try:
-                print(user.telegram_id)
-                bot.send_message(user.telegram_id, text=text)
-            except Exception as e:
-                print(e)
+        for chat in chats:
+            bot.send_message(chat, text=text)
+        # for user in cls.objects.all():
+        #     # for user in cls.objects.filter(is_active=True):
+        #     try:
+        #         print(user.telegram_id)
+        #         bot.send_message(user.telegram_id, text=text)
+        #     except Exception as e:
+        #         print(e)
 
 
 # Опросы

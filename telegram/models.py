@@ -19,7 +19,8 @@ class User(models.Model):
     @classmethod
     def whitelist(cls, text: str):
         bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
-        for user in cls.objects.filter(is_active=True):
+        for user in cls.objects.all():
+            # for user in cls.objects.filter(is_active=True):
             try:
                 print(user.telegram_id)
                 bot.send_message(user.telegram_id, text=text)

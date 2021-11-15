@@ -29,7 +29,10 @@ class ServiceView(APIView):
         except Service.DoesNotExist:
             return Response(status=404)
         print(datetime.datetime.now().time())
-        if service.start_time <= datetime.datetime.now().time() <= service.end_time:
+        print(service.start_time)
+        print(service.end_time)
+        if service.start_time < datetime.datetime.now().time() < service.end_time:
+            print('success')
             text = "hello world!"
             if data.get("period") == "w":
                 text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"

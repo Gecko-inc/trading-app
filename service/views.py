@@ -28,6 +28,7 @@ class ServiceView(APIView):
             service = Service.objects.get(key='service_screener', is_active=True)
         except Service.DoesNotExist:
             return Response(status=404)
+        print(datetime.datetime.now().time())
         if service.start_time <= datetime.datetime.now().time() <= service.end_time:
             text = "hello world!"
             if data.get("period") == "w":

@@ -52,7 +52,9 @@ class InfoView(APIView):
                 threading.Thread(target=parser, name="W parser",
                                  args=(service.rsi_w, service.papers(), "w", user.telegram_id)).start()
                 threading.Thread(target=parser, name="B parser",
-                                 args=(service.rsi_b, service.papers(), "b", user.telegram_id)).start()
+                                 args=(service.rsi_b, service.papers(), "bw", user.telegram_id)).start()
+                threading.Thread(target=parser, name="B parser",
+                                 args=(service.rsi_bd, service.papers(), "bd", user.telegram_id)).start()
                 return Response(status=200)
             return Response(status=401)
         except User.DoesNotExist:

@@ -33,11 +33,16 @@ def parser(rsi: str, papers: list, period: str, user: str):
     bot = telebot.TeleBot(Config.objects.get(key="bot_token").value)
     d_data = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI","operation":"less","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close","change","change_abs","Recommend.All","volume","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
     w_data = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI|1W","operation":"less","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close|1W","change|1W","change_abs|1W","Recommend.All|1W","volume|1W","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode|1W","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
-    big_data = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI|1W","operation":"greater","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close|1W","change|1W","change_abs|1W","Recommend.All|1W","volume|1W","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode|1W","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
+    big_data_w = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI|1W","operation":"greater","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close|1W","change|1W","change_abs|1W","Recommend.All|1W","volume|1W","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode|1W","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
+    big_data_d = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","foreign-issuer","","etf","etf,odd","etf,otc","etf,cfd"]},{"left":"exchange","operation":"in_range","right":["AMEX","NASDAQ","NYSE"]},{"left":"RSI","operation":"greater","right":' + rsi + '},{"left":"is_primary","operation":"equal","right":true}],"options":{"lang":"ru"},"markets":["america"],"symbols":{"query":{"types":[]},"tickers":[]},"columns":["logoid","name","close","change","change_abs","Recommend.All","volume","market_cap_basic","price_earnings_ttm","earnings_per_share_basic_ttm","number_of_employees","sector","description","type","subtype","update_mode","pricescale","minmov","fractional","minmove2","currency","fundamental_currency_code"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,150]}'
 
-    data = d_data if period == "d" else w_data
-    if period == "b":
-        data = big_data
+    data_option = {
+        'd': d_data,
+        'w': w_data,
+        'bw': big_data_w,
+        'bd': big_data_d,
+    }
+    data = data_option.get(period)
     response = requests.post('https://scanner.tradingview.com/america/scan', headers=headers_data, data=data)
 
     for _ in response.json().get('data'):
@@ -49,6 +54,8 @@ def parser(rsi: str, papers: list, period: str, user: str):
                     text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper[1]}"
                 if period == "d":
                     text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper[1]}"
-                if period == "b":
+                if period == "bw":
                     text = f"Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
+                if period == "bd":
+                    text = f"Дневной RSI выше {service.rsi_bd} у акции {paper[1]}"
                 bot.send_message(user, text)

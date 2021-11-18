@@ -12,8 +12,10 @@ class ServiceSerializer(serializers.ModelSerializer):
             "d_timeout",
             "w_timeout",
             "b_timeout",
+            "bd_timeout",
             "rsi_d",
             "rsi_w",
             "rsi_b",
+            "rsi_bd",
             "papers",
         ]

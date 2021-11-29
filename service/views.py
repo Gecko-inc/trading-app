@@ -35,13 +35,13 @@ class ServiceView(APIView):
             print('success')
             text = "hello world!"
             if data.get("period") == "w":
-                text = f"Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
+                text = f"🛑Недельный RSI упал ниже {service.rsi_w} у акции {paper}"
             if data.get("period") == "d":
-                text = f"Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
+                text = f"🛑Дневной RSI упал ниже {service.rsi_d} у акции {paper}"
             if data.get("period") == "bw":
-                text = f"Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
+                text = f"💹Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
             if data.get("period") == "bd":
-                text = f"Дневной RSI выше {service.rsi_bd} у акции {paper[1]}"
+                text = f"💹Дневной RSI выше {service.rsi_bd} у акции {paper[1]}"
             User.whitelist(text=text)
             return Response(status=200)
         return Response(status=301)

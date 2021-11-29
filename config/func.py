@@ -51,11 +51,11 @@ def parser(rsi: str, papers: list, period: str, user: str):
             if paper[1] in papers:
                 text = "hello world!"
                 if period == "w":
-                    text = f"🛑Недельный RSI упал ниже {service.rsi_w} у акции {paper[1]}"
+                    text = f"💹Недельный RSI упал ниже {service.rsi_w} у акции {paper[1]}"
                 if period == "d":
-                    text = f"🛑Дневной RSI упал ниже {service.rsi_d} у акции {paper[1]}"
+                    text = f"💹Дневной RSI упал ниже {service.rsi_d} у акции {paper[1]}"
                 if period == "bw":
-                    text = f"💹Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
+                    text = f"🛑Недельный RSI выше {service.rsi_b} у акции {paper[1]}"
                 if period == "bd":
-                    text = f"💹Дневной RSI выше {service.rsi_bd} у акции {paper[1]}"
+                    text = f"🛑Дневной RSI выше {service.rsi_bd} у акции {paper[1]}"
                 bot.send_message(user, text)
